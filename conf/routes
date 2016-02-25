@@ -1,0 +1,8 @@
+# Routes
+# STATIC ASSETS
+GET     /                      controllers.Assets.at(path="/public", file="index.html")
+GET     /assets/*file          controllers.Assets.at(path="/public", file)
+
+# API RESOURCES
+GET     /api/product           uk.mm.mpp.controllers.Application.products
+GET     /api/results/*uid      uk.mm.mpp.controllers.Application.results(uid: String)

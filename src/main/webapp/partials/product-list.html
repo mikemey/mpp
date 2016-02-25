@@ -1,0 +1,36 @@
+<div class="container-fluid">
+  <div class="content col-xs-offset-3 col-xs-6 ">
+    <div class="row user-input">
+      <div class="col-xs-8">
+        <a class="btn btn-success" href="#" ng-click="requestProducts()">
+          Find products...
+        </a>
+      </div>
+
+      <div ng-show="products.length > 0" class="col-xs-2 product-count">
+        results: {{products.length}}
+      </div>
+      <div class="col-xs-2">
+        <div class="spinner"></div>
+      </div>
+
+    </div>
+    <div class="row user-input">
+      <div class="col-xs-12"> {{raw}} </div>
+    </div>
+
+    <div id="products">
+      <div class="row product" ng-repeat="p in products | filter:query">
+        <div class="col-xs-3">
+          <img ng-src="{{p.img_url}}" alt="{{p.name}}">
+        </div>
+        <div class="col-xs-2 prod-name">
+          {{p.name}}
+        </div>
+        <div class="col-xs-7 prod-descr">
+          {{p.desc}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
