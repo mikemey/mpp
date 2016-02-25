@@ -2,10 +2,6 @@ package uk.mm.mpp.controllers
 
 import javax.inject.{Inject, _}
 
-import uk.mm.mpp.actors.{ResultActor, ProductActor}
-import ProductActor.ProductRequest
-import ResultActor.{AllRecordsReceived, FullResult, UpdateRequest}
-import actors.ResultActor
 import akka.actor.{ActorSystem, _}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -14,6 +10,9 @@ import org.json4s.native.JsonMethods
 import play.api._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
+import uk.mm.mpp.actors.ProductActor.ProductRequest
+import uk.mm.mpp.actors.ResultActor.{AllRecordsReceived, FullResult, UpdateRequest}
+import uk.mm.mpp.actors.{ProductActor, ResultActor}
 
 import scala.concurrent.Await.result
 import scala.concurrent.Future

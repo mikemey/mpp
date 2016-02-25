@@ -3,6 +3,7 @@ package uk.mm.mpp.actors
 import akka.actor.{Actor, PoisonPill, Props}
 import org.json4s.{JArray, JValue}
 import org.slf4j.LoggerFactory
+import uk.mm.mpp.actors.ResultActor.{AllRecordsReceived, FullResult, PartialUpdate, UpdateRequest}
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext

@@ -3,6 +3,7 @@ package uk.mm.mpp.actors
 import akka.actor.{Actor, Props}
 import org.json4s._
 import org.json4s.native.JsonMethods._
+import uk.mm.mpp.actors.ProductActor.{ErrorResponse, ProductRequest, ProductResponse}
 
 import scala.concurrent.ExecutionContext
 import scalaj.http.{BaseHttp, HttpOptions, HttpResponse}

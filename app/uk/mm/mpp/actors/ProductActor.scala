@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils.{abbreviate, replacePattern}
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import play.api.Logger
+import uk.mm.mpp.actors.ProductActor.{ErrorResponse, ProductRequest, ProductResponse}
+import uk.mm.mpp.actors.ResultActor.{AllRecordsReceived, PartialUpdate}
 
 object Providers {
   val ports = List(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024)
