@@ -1,5 +1,7 @@
-<div class="container-fluid">
-  <div class="content">
+<div class="container-fluid bg">
+  <div class="col-xs-1 separator">kk</div>
+  <div class="col-xs-1 overlay"></div>
+  <div class="col-xs-10 content">
 
     <div class="row user-input">
       <div class="col-xs-4">
@@ -17,16 +19,19 @@
       <span class="col-xs-1">status:</span>
       <span class="col-xs-4"> {{ socketStatus }} </span>
       <ul class="col-xs-5 list-unstyled">
-        <li>start: &nbsp;{{ startTime }} </li>
-        <li>&nbsp;end: &nbsp;{{ endTime }} </li>
+        <li>start: &nbsp;{{ startTime }}</li>
+        <li>&nbsp;end: &nbsp;{{ endTime }}</li>
       </ul>
-      <span class="col-xs-2">{{ products.length }} / {{ counter }} / {{ total }}</span>
+      <ul class="col-xs-2 list-unstyled">
+        <li>{{ products.length }} / {{ counter }} / {{ total }}</li>
+        <li>T / U / P</li>
+      </ul>
     </div>
 
-    <div class="row product" ng-repeat="p in products | filter:query">
-      <div class="col-xs-2"><img ng-src="{{p.img_url}}" alt="{{p.name}}"></div>
+    <div class="row product loading" ng-repeat="p in products | filter:query">
+      <div class="col-xs-3"><img ng-src="{{p.img_url}}" alt="{{p.name}}"></div>
       <div ng-bind="p.name" class="col-xs-2 prod-name"> {{p.name}}</div>
-      <div class="col-xs-8 prod-descr"> {{p.desc | limitTo : 210 }}</div>
+      <div class="col-xs-7 prod-descr"> {{p.desc | limitTo : 210 }}</div>
     </div>
 
   </div>

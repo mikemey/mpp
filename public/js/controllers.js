@@ -55,6 +55,11 @@ mppControllers.controller('ProductListCtrl', ['$scope', 'Products',
         function addProducts(products) {
             Array.prototype.push.apply($scope.products, products);
             $scope.$apply();
+            $('.loading').each(function(index, element) {
+                setTimeout(function(){
+                    element.classList.remove('loading');
+                }, index * 500);
+            });
         }
 
         function updateCounter(counter, total) {
@@ -89,7 +94,6 @@ mppControllers.controller('ProductListCtrl', ['$scope', 'Products',
         function dataSocketClosed(evt) {
             setSocketStatus('closed');
             setEndTime();
-            console.log('end socket.');
         }
 
         function onError(evt) {
