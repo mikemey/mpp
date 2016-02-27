@@ -4,6 +4,6 @@ GET     /                      controllers.Assets.at(path="/public", file="index
 GET     /assets/*file          controllers.Assets.at(path="/public", file)
 
 # API RESOURCES
-GET     /api/product           uk.mm.mpp.controllers.Application.products
-GET     /api/results/*uid      uk.mm.mpp.controllers.Application.results(uid: String)
-GET     /api/socket/*uid      uk.mm.mpp.controllers.Application.socket(uid: String)
+GET     /api/products          uk.mm.mpp.controllers.ProductsController.products
+GET     /api/results/*uid      uk.mm.mpp.controllers.ProductsController.results(uid: String)
+GET     /api/socket/*uid       uk.mm.mpp.controllers.ProductsController.socket(uid: String)

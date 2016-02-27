@@ -4,44 +4,65 @@
 
 var mppControllers = angular.module('mppControllers', []);
 
-mppControllers.controller('ProductListCtrl', ['$scope',
-function($scope) {
-  $scope.greeting = 'DDD';
+mppControllers.controller('ProductListCtrl', ['$scope', 'Products',
+    function($scope, Products) {
+        $scope.friends = [];
+        var dataSocket = null;
+        $scope.socketStatus = 'not started.';
 
-  $scope.requestProducts =function() {
-   return $scope.$apply(function() {
-    console.log('add ' + $scope.greeting);
-    $scope.greeting = $scope.greeting + ' - ' + $scope.greeting;
-    console.log('add ' + $scope.greeting);
-    console.log('up to here ');
-  });
-  };
+        $scope.requestUpdate = function() {
+            var data = Products.get(function() {
+                openUpdateConnection(data.location);
+            });
+        };
 
-  $scope.greeting = $scope.greeting + ' - ' + $scope.greeting;
-}]);
+        function setSocketStatus(newStatus) {
+            $scope.socketStatus = newStatus;
+            $scope.apply();
+        }
 
-//mppControllers.controller('ProductListCtrl', ['$scope',
-//  function($scope) {
-////    $scope.products = [];
-//    $scope.txt = 'start';
+        function openUpdateConnection(socketLocation) {
+            if (dataSocket) {
+                dataSocket.close();
+            }
+            dataSocket = new WebSocket(socketLocation);
+            dataSocket.onopen = function(evt) { dataSocketOpened(evt) };
+            dataSocket.onclose = function(evt) { dataSocketClosed(evt) };
+            dataSocket.onmessage = function(evt) { onMessage(evt) };
+            dataSocket.onerror = function(evt) { onError(evt) };
+        }
 
-    //$scope.products.push({ name: 'first', offerUrl: 'http://www.google.com', desc: 'Lorem Ipsum', imgUrl: 'http://www.credit-card-logos.com/images/multiple_credit-card-logos-2/credit_card_logos_29.gif' });
+        function dataSocketOpened(evt) {
+            setSocketStatus('receiving data updates...');
+            $scope.$apply();
+            doSend("READY");
+        };
 
-//    function requestProducts() {
-//        $scope.$apply($scope.addProduct('second'));
-////        addProduct({
-////            name: 'second',
-////            offerUrl: 'http://www.google.com',
-////            desc: 'Lorem Ipsum',
-////            imgUrl: 'http://www.credit-card-logos.com/images/multiple_credit-card-logos-2/credit_card_logos_29.gif'
-////        });
-////        $scope.queueUpdateRequest('/api/products');
-//    };
-//
-//    $scope.addProduct = function() {
-//        console.log('before: ' + $scope.txt);
-//        $scope.txt = $scope.txt + ' ' + product;
-//        console.log('after : ' + $scope.txt);
-//    };
-//    $scope.addProduct('first');
-//  }]);
+        function dataSocketClosed(evt) {
+            setSocketStatus('done.');
+        };
+
+        function onMessage(evt) {
+            console.log('RESPONSE: ' + evt.data);
+            dataSocket.close();
+//            websocket.close();
+        };
+
+        function onError(evt) {
+            setSocketStatus('error: ' + evt.data);
+        };
+
+        function doSend(message) {
+            dataSocket.send(message);
+        }
+
+        function createFriend() {
+          return { id: $scope.friends.length, name: "Name_" + $scope.friends.length };
+        };
+
+        function getFriends() {
+            $scope.friends.push({ id: $scope.friends.length, name: "Name_" + $scope.friends.length });
+            return $scope.friends;
+        };
+    }
+]);

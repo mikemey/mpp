@@ -1,0 +1,51 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+  <meta charset="utf-8"/>
+  <style type="text/css">
+    a[ ng-click ] {
+    cursor: pointer ;
+    text-decoration: underline ;
+    }
+  </style>
+</head>
+<body ng-controller="AppController">
+<h1>
+  Using Track-By With ngRepeat In AngularJS
+</h1>
+
+<ul>
+  <li ng-repeat="friend in friends">
+    {{ friend.id }} &mdash; {{ friend.name }}
+  </li>
+</ul>
+<p>
+  <a ng-click="rebuildFriends()">Rebuild Friends</a>
+</p>
+
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+
+<script type="text/javascript">
+        var app = angular.module( "Demo", [] );
+        app.controller(
+            "AppController",
+            function( $scope ) {
+                $scope.friends = [];
+
+                $scope.rebuildFriends = function() {
+                    console.log( "Rebuilding..." );
+                    $scope.friends = getFriends();
+                };
+
+                function getFriends() {
+                   // friends.push({ id: friends.length, name: "Name_" + friends.length });
+                   $scope.friends.push({ id: $scope.friends.length, name: "Name_" + $scope.friends.length });
+                    return $scope.friends;
+                }
+            }
+        );
+</script>
+
+</body>
+</html>
