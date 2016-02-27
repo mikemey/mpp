@@ -7,12 +7,13 @@ import akka.pattern.ask
 import akka.util.Timeout
 import org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import org.json4s.native.JsonMethods
+import play.api.Play.current
 import play.api._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import uk.mm.mpp.actors.ProductActor.ProductRequest
 import uk.mm.mpp.actors.ResultActor.{AllRecordsReceived, FullResult, UpdateRequest}
-import uk.mm.mpp.actors.{ProductActor, ResultActor}
+import uk.mm.mpp.actors.{DataSocketActor, ProductActor, ResultActor}
 
 import scala.concurrent.Await.result
 import scala.concurrent.Future
@@ -37,7 +38,9 @@ class Application @Inject()(system: ActorSystem) extends Controller {
     val productActor = system.actorOf(ProductActor.props(uid, resultActor))
 
     productActor ! ProductRequest
-    Accepted(s"""{ "location": "/api/results/$uid" }""")
+    routes.Application.socket(uid)
+
+    Accepted(s"""{ "location": "${routes.Application.socket(uid)}" }""")
   }
 
   def results(uid: String) = Action.async {
@@ -46,7 +49,11 @@ class Application @Inject()(system: ActorSystem) extends Controller {
       .getOrElse(Future.successful(returnInvalidActorMessage))
   }
 
-  def searchForResultActor(uid: String) = {
+  def socket(uid: String) = WebSocket.acceptWithActor[String, String] { request => out =>
+    DataSocketActor.props(out, uid)
+  }
+
+  private def searchForResultActor(uid: String) = {
     val raName = "user/" + resultActorName(uid)
     val raSelection = system.actorSelection(raName)
     try {
@@ -56,7 +63,7 @@ class Application @Inject()(system: ActorSystem) extends Controller {
     }
   }
 
-  def toHttpResult(update: Any): Result = update match {
+  private def toHttpResult(update: Any): Result = update match {
     case FullResult(data) => Ok(JsonMethods.compact(JsonMethods.render(data)))
     case AllRecordsReceived => ResetContent
     case _ => Gone("""{ "error": "No response from result actor." }"""")

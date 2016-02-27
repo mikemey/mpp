@@ -7,6 +7,10 @@
         </a>
       </div>
 
+      <div>
+        {{ greeting }}
+      </div>
+
       <div ng-show="products.length > 0" class="col-xs-2 product-count">
         results: {{products.length}}
       </div>
@@ -16,7 +20,7 @@
 
     </div>
     <div class="row user-input">
-      <div class="col-xs-12"> {{raw}} </div>
+      <div class="col-xs-12"> {{raw}}</div>
     </div>
 
     <div id="products">
