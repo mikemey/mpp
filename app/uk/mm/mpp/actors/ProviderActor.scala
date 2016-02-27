@@ -24,9 +24,8 @@ object ProviderActor {
 class ProviderActor(uid: String, port: Int) extends Actor {
   protected implicit def executor: ExecutionContext = context.dispatcher
 
-  val logger = Logger(MPP_PREFIX + getClass.getSimpleName + "_" + uid + "_" + port)
+  val logger = Logger(MPP_WORKER_PREFIX + getClass.getSimpleName + "_" + uid + "_" + port)
   val providerUrl: String = "http://localhost:" + port + "/3rd/products"
-
 
   def receive = {
     case ProductRequest =>
@@ -34,16 +33,17 @@ class ProviderActor(uid: String, port: Int) extends Actor {
       sender ! productUpdateFrom(response)
   }
 
-  def productUpdateFrom(source: HttpResponse[String]) = if (source.isSuccess) {
-    logger.debug(s"from: [$providerUrl]: [${piedPiper(source.body)}]")
-    ProductResponse(parse(source.body))
+  def productUpdateFrom(response: HttpResponse[String]) = if (response.isSuccess) {
+    logger.debug(s"from: [$providerUrl]: [${piedPiper(response)}]")
+    ProductResponse(parseJsonFrom(response))
   } else {
-    logger.warn(s"from: [$providerUrl]: [${source.body}]")
-    ProductResponse(JObject())
+    logger.warn(s"from: [$providerUrl]: [${response.body}]")
+    ProductResponse(List.empty)
   }
 
-  def piedPiper(body: String) = {
-    //    val message = compact(render(json))
-    abbreviate(replacePattern(body, """\s{2,}""", " "), 30)
+  def piedPiper(response: HttpResponse[String]) = {
+    abbreviate(replacePattern(response.body, """\s{2,}""", " "), 30)
   }
+
+  def parseJsonFrom(response: HttpResponse[String]) = parse(response.body).asInstanceOf[JArray].arr
 }
