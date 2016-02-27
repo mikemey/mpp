@@ -13,7 +13,15 @@
       </div>
     </div>
 
-    <span class="small" ng-bind="socketStatus"></span>
+    <div class="row stats">
+      <span class="col-xs-1">status:</span>
+      <span class="col-xs-4"> {{ socketStatus }} </span>
+      <ul class="col-xs-5 list-unstyled">
+        <li>start: &nbsp;{{ startTime }} </li>
+        <li>&nbsp;end: &nbsp;{{ endTime }} </li>
+      </ul>
+      <span class="col-xs-2">{{ products.length }} / {{ counter }} / {{ total }}</span>
+    </div>
 
     <div class="row product" ng-repeat="p in products | filter:query">
       <div class="col-xs-2"><img ng-src="{{p.img_url}}" alt="{{p.name}}"></div>

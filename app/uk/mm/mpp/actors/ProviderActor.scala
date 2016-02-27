@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils._
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import play.api.Logger
-import uk.mm.mpp.actors.SearchActor.{ProductRequest, ProductResponse}
+import uk.mm.mpp.actors.ProviderActor.{ProductRequest, ProductResponse}
 import uk.mm.mpp.globals._
 
 import scala.concurrent.ExecutionContext
@@ -19,6 +19,11 @@ object ProviderHttp extends BaseHttp(options = Seq(
 
 object ProviderActor {
   def props(uid: String, port: Int) = Props(classOf[ProviderActor], uid, port)
+
+  case class ProductRequest()
+
+  case class ProductResponse(products: JArray)
+
 }
 
 class ProviderActor(uid: String, port: Int) extends Actor {
@@ -38,12 +43,12 @@ class ProviderActor(uid: String, port: Int) extends Actor {
     ProductResponse(parseJsonFrom(response))
   } else {
     logger.warn(s"from: [$providerUrl]: [${response.body}]")
-    ProductResponse(List.empty)
+    ProductResponse(JArray(List()))
   }
 
   def piedPiper(response: HttpResponse[String]) = {
     abbreviate(replacePattern(response.body, """\s{2,}""", " "), 30)
   }
 
-  def parseJsonFrom(response: HttpResponse[String]) = parse(response.body).asInstanceOf[JArray].arr
+  def parseJsonFrom(response: HttpResponse[String]) = parse(response.body).asInstanceOf[JArray]
 }

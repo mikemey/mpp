@@ -6,7 +6,7 @@ body {
 .content {
   background-color: #ebebeb;
   border-radius: 5px;
-  padding: 20px 20px;
+  padding: 15px 20px 10px 20px;
   width: 600px;
   margin: 0 auto;
 }
@@ -36,4 +36,9 @@ body {
 
 .product-count {
   font-size: 0.8em;
+}
+
+.stats {
+  font-size: 0.85em;
+  margin-top: 10px;
 }

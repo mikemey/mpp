@@ -3,8 +3,8 @@ package uk.mm.mpp.actors
 import akka.actor.{Actor, ActorRef, PoisonPill, Props}
 import org.json4s._
 import play.api.Logger
-import uk.mm.mpp.actors.DataSocketActor.{AllRecordsReceived, PartialUpdate}
-import uk.mm.mpp.actors.SearchActor.{ErrorResponse, PORTS, ProductRequest, ProductResponse}
+import uk.mm.mpp.actors.ProviderActor.{ProductRequest, ProductResponse}
+import uk.mm.mpp.actors.SearchActor._
 import uk.mm.mpp.globals.MPP_WORKER_PREFIX
 
 object SearchActor {
@@ -12,9 +12,9 @@ object SearchActor {
 
   def props(uid: String, dataCollectorActor: ActorRef) = Props(classOf[SearchActor], uid, dataCollectorActor)
 
-  case class ProductRequest()
+  case class PartialUpdate(data: JObject)
 
-  case class ProductResponse(products: List[JValue])
+  case class AllRecordsReceived()
 
   case class ErrorResponse(status: String, message: JValue)
 
@@ -36,7 +36,7 @@ class SearchActor(uid: String, dataCollectorActor: ActorRef) extends Actor {
       providerActors.foreach(provider => provider ! ProductRequest)
 
     case ProductResponse(products) =>
-      dataCollectorActor ! PartialUpdate(products)
+      dataCollectorActor ! PartialUpdate(from(products))
       shutdownProviderActor(sender)
 
     case ErrorResponse(status, msg) => shutdownProviderActor(sender)
@@ -50,6 +50,12 @@ class SearchActor(uid: String, dataCollectorActor: ActorRef) extends Actor {
       self ! PoisonPill
     }
   }
+
+  def from(products: JArray) = JObject(List(
+    JField("counter", JInt(providerActors.size - remainingProviders + 1)),
+    JField("total", JInt(providerActors.size)),
+    JField("products", products))
+  )
 
   override def postStop {
     logger.info("stopped.")

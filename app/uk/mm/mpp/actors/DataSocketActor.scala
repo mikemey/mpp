@@ -2,24 +2,19 @@ package uk.mm.mpp.actors
 
 import akka.actor._
 import akka.util.Timeout
-import org.json4s.JsonDSL._
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import play.api.Logger
-import uk.mm.mpp.actors.DataSocketActor.{AllRecordsReceived, PartialUpdate}
-import uk.mm.mpp.actors.SearchActor.ProductRequest
+import uk.mm.mpp.actors.ProviderActor.ProductRequest
+import uk.mm.mpp.actors.SearchActor.{AllRecordsReceived, PartialUpdate}
 import uk.mm.mpp.globals._
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 object DataSocketActor {
   def props(out: ActorRef) = Props(classOf[DataSocketActor], out)
-
-  case class PartialUpdate(data: List[JValue])
-
-  case class AllRecordsReceived()
-
 }
 
 class DataSocketActor(out: ActorRef) extends Actor {
