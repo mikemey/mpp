@@ -6,7 +6,7 @@ import org.json4s.JsonDSL._
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import play.api.Logger
-import uk.mm.mpp.actors.DataSocketActor.{AllRecordsReceived, PartialUpdate, STOP_MESSAGE}
+import uk.mm.mpp.actors.DataSocketActor.{AllRecordsReceived, PartialUpdate}
 import uk.mm.mpp.actors.SearchActor.ProductRequest
 import uk.mm.mpp.globals._
 
@@ -15,8 +15,6 @@ import scala.concurrent.duration._
 
 object DataSocketActor {
   def props(out: ActorRef) = Props(classOf[DataSocketActor], out)
-
-  val STOP_MESSAGE = """{ "message": "done" }"""
 
   case class PartialUpdate(data: List[JValue])
 
@@ -28,7 +26,7 @@ class DataSocketActor(out: ActorRef) extends Actor {
   protected implicit def executor: ExecutionContext = context.dispatcher
 
   implicit val timeout = new Timeout(2 seconds)
-  val logger = Logger(MPP_PREFIX + getClass.getSimpleName)
+  val logger = Logger(MPP_WORKER_PREFIX + getClass.getSimpleName)
 
   override def preStart() = {
     logger.debug(s"started.")
@@ -44,7 +42,6 @@ class DataSocketActor(out: ActorRef) extends Actor {
       out ! compact(render(data))
     case AllRecordsReceived =>
       logger.debug("received all records received.")
-      out ! STOP_MESSAGE
       self ! PoisonPill
     case msg => logger.error(s"UNKNOWN: [${msg.getClass}] [$msg]")
   }

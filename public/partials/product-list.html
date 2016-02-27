@@ -1,28 +1,25 @@
 <div class="container-fluid">
-  <div class="content col-xs-offset-3 col-xs-6 ">
+  <div class="content">
 
     <div class="row user-input">
+      <div class="col-xs-4">
+        <a class="btn btn-success" ng-click="productSearch()"> Find products... </a>
+      </div>
       <div class="col-xs-8">
-        <a class="btn btn-success" ng-click="requestUpdate()"> Find products... </a>
+        <div class="input-group">
+          <span class="input-group-addon" id="basic-addon1">Filter:</span>
+          <input type="text" class="form-control" ng-model="query" aria-describedby="basic-addon1">
+        </div>
       </div>
     </div>
 
-    <span class="row" ng-bind="socketStatus"></span>
-    <div class="row product" ng-repeat="friend in friends">
-        {{ friend.id }} &mdash; {{ friend.name }}
-    </div>
+    <span class="small" ng-bind="socketStatus"></span>
 
-  <!--<div class="row product" ng-repeat="p in products | filter:query">-->
-    <!--&lt;!&ndash;<div class="col-xs-3">&ndash;&gt;-->
-      <!--&lt;!&ndash;<img ng-src="{{p.img_url}}" alt="{{p.name}}">&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--<div ng-bind="p.name" class="col-xs-2 prod-name">-->
-      <!--{{p.name}}-->
-    <!--</div>-->
-    <!--&lt;!&ndash;<div class="col-xs-7 prod-descr">&ndash;&gt;-->
-      <!--&lt;!&ndash;{{p.desc}}&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-  <!--</div>-->
+    <div class="row product" ng-repeat="p in products | filter:query">
+      <div class="col-xs-2"><img ng-src="{{p.img_url}}" alt="{{p.name}}"></div>
+      <div ng-bind="p.name" class="col-xs-2 prod-name"> {{p.name}}</div>
+      <div class="col-xs-8 prod-descr"> {{p.desc | limitTo : 210 }}</div>
+    </div>
 
   </div>
 </div>

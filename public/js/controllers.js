@@ -6,16 +6,16 @@ var mppControllers = angular.module('mppControllers', []);
 
 mppControllers.controller('ProductListCtrl', ['$scope', 'Products',
     function($scope, Products) {
-        $scope.friends = [];
-        $scope.socketStatus = 'not started.  cccc';
+        $scope.products = [];
+        $scope.socketStatus = 'not started.';
 
         $scope.dataSocket = null;
         var uid = null;
 
-        $scope.requestUpdate = function() {
-            console.debug('1. requesting products');
+        $scope.productSearch = function() {
+            $scope.socketStatus = 'requesting products...';
+            $scope.products = [];
             var data = Products.get(function() {
-                console.debug('[' + data.uid + '] 2. product response received.');
                 setUid(data.uid);
                 openUpdateConnection(data.location);
             });
@@ -23,14 +23,18 @@ mppControllers.controller('ProductListCtrl', ['$scope', 'Products',
 
         function setUid(newUid) {
             uid = newUid;
-////            $scope.apply();
         }
-//
-//        function setSocketStatus(newStatus) {
-//            $scope.socketStatus = newStatus;
-//            $scope.apply();
-//        }
-//
+
+        function setSocketStatus(newStatus) {
+            $scope.socketStatus = newStatus;
+            $scope.$apply();
+        }
+
+        function addProducts(products) {
+            Array.prototype.push.apply($scope.products, products);
+            $scope.$apply();
+        }
+
         function openUpdateConnection(socketLocation) {
             if ($scope.dataSocket) {
                 $scope.dataSocket.close();
@@ -41,40 +45,26 @@ mppControllers.controller('ProductListCtrl', ['$scope', 'Products',
             $scope.dataSocket.onmessage = function(evt) { onMessage(evt) };
             $scope.dataSocket.onerror = function(evt) { onError(evt) };
         }
-//
+
         function dataSocketOpened(evt) {
-            console.debug('[' + uid + '] 3. socket connected.');
+            setSocketStatus('connected');
             doSend('{ "query": "' + uid +'" }');
         };
-//
+
         function dataSocketClosed(evt) {
-            console.info('socket closed.');
-//            setSocketStatus('[' + uid + ']closed.');
+            setSocketStatus('closed');
         };
 
         function onMessage(evt) {
-            console.log('[' + uid + '] RECV: ' + evt.data);
-//            // $scope.dataSocket.close();
-////            websocket.close();
+            addProducts($.parseJSON(evt.data));
         };
-//
+
         function onError(evt) {
-            console.error('RECV: ' + evt.data);
-//            setSocketStatus('[' + uid + ']error: ' + evt.data);
+            setSocketStatus('error: ' + evt.data);
         };
-//
+
         function doSend(message) {
-            console.debug('[' + uid + '] 4. sending: [' + message + ']');
             $scope.dataSocket.send(message);
         }
-//
-//        function createFriend() {
-//          return { id: $scope.friends.length, name: "Name_" + $scope.friends.length };
-//        };
-//
-//        function getFriends() {
-//            $scope.friends.push({ id: $scope.friends.length, name: "Name_" + $scope.friends.length });
-//            return $scope.friends;
-//        };
     }
 ]);

@@ -7,37 +7,33 @@ body {
   background-color: #ebebeb;
   border-radius: 5px;
   padding: 20px 20px;
+  width: 600px;
+  margin: 0 auto;
 }
 
 .product {
-  margin-top: 2px;
-  background-color: #7ea6ff;
+  margin-top: 3px;
+  padding: 4px 8px;
+  background-color: #f5f5f5;
+  border: 1px solid #b3b3b3;
   border-radius: 4px;
-  padding: 6px;
-}
-
-.user-input {
-  padding-bottom: 15px;
 }
 
 .product img {
   height: 50px;
-  width: auto;
+  float: right;
 }
 
 .prod-name {
-  padding: 15px 0;
-  font-size: 1em;
+  padding: 3px 0;
+  font-size: 0.95em;
 }
 
 .prod-descr {
+  padding: 0;
   font-size: 0.8em;
 }
 
 .product-count {
-  font-size: 0.8em;
-}
-
-.spinner {
   font-size: 0.8em;
 }
