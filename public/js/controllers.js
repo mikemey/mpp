@@ -58,7 +58,7 @@ mppControllers.controller('ProductListCtrl', ['$scope', 'Products',
             $('.loading').each(function(index, element) {
                 setTimeout(function(){
                     element.classList.remove('loading');
-                }, index * 500);
+                }, index * 300);
             });
         }
 
