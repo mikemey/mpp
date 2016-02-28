@@ -1,15 +1,18 @@
 package uk.mm.mpp.actors
 
 import akka.actor.{Actor, Props}
+import akka.pattern.pipe
 import org.apache.commons.lang3.StringUtils._
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import play.api.Logger
+import play.api.Play.current
+import play.api.libs.ws.{WSRequest, WS, WSClient, WSResponse}
 import uk.mm.mpp.actors.ProviderActor.{ProductRequest, ProductResponse}
 import uk.mm.mpp.globals._
 
-import scala.concurrent.ExecutionContext
-import scalaj.http.{BaseHttp, HttpOptions, HttpResponse}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scalaj.http.{BaseHttp, HttpOptions}
 
 object ProviderHttp extends BaseHttp(options = Seq(
   HttpOptions.connTimeout(2000),
@@ -27,18 +30,28 @@ object ProviderActor {
 }
 
 class ProviderActor(uid: String, port: Int) extends Actor {
-  protected implicit def executor: ExecutionContext = context.dispatcher
+
+  private lazy val request : WSRequest = WS.client.url(providerUrl)
+    .withFollowRedirects(false)
+    .withRequestTimeout(15000)
 
   val logger = Logger(MPP_WORKER_PREFIX + getClass.getSimpleName + "_" + uid + "_" + port)
   val providerUrl: String = "http://localhost:" + port + "/3rd/products"
 
+
   def receive = {
     case ProductRequest =>
-      val response: HttpResponse[String] = ProviderHttp(providerUrl).asString
-      sender ! productUpdateFrom(response)
+      request.get()
+        .map(productUpdateFrom)
+        .recover(withEmptyJsonArray)
+        .pipeTo(sender)
   }
 
-  def productUpdateFrom(response: HttpResponse[String]) = if (response.isSuccess) {
+  val withEmptyJsonArray: PartialFunction[Throwable, ProductResponse] = {
+    case _ => ProductResponse(JArray(List()))
+  }
+
+  def productUpdateFrom(response: WSResponse): ProductResponse = if (response.status == 200) {
     logger.debug(s"from: [$providerUrl]: [${piedPiper(response)}]")
     ProductResponse(parseJsonFrom(response))
   } else {
@@ -46,9 +59,11 @@ class ProviderActor(uid: String, port: Int) extends Actor {
     ProductResponse(JArray(List()))
   }
 
-  def piedPiper(response: HttpResponse[String]) = {
+  def piedPiper(response: WSResponse) = {
     abbreviate(replacePattern(response.body, """\s{2,}""", " "), 30)
   }
 
-  def parseJsonFrom(response: HttpResponse[String]) = parse(response.body).asInstanceOf[JArray]
+  def parseJsonFrom(response: WSResponse) = parse(response.body).asInstanceOf[JArray]
+
+
 }
