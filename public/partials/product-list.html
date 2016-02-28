@@ -28,10 +28,10 @@
       </ul>
     </div>
 
-    <div class="row product loading" ng-repeat="p in products | filter:query">
+    <div class="row product loading" ng-repeat="p in products | filter:query | orderBy:p.score">
       <img ng-src="{{p.img_url}}" alt="{{p.name}}">
       <div ng-bind="p.name" class="col-xs-2 prod-name"> {{p.name}}</div>
-      <div class="col-xs-8 prod-descr"> {{p.desc | limitTo : 190 }}... </div>
+      <div class="col-xs-8 prod-descr"> [{{ p.score }}] {{p.desc | limitTo : 190 }}... </div>
     </div>
 
   </div>
