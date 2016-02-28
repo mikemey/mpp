@@ -28,10 +28,13 @@
       </ul>
     </div>
 
-    <div class="row product loading" ng-repeat="p in products | filter:query | orderBy:p.score">
+    <div class="row product loading" ng-repeat="p in products | filter:query | orderBy:'-score'">
       <img ng-src="{{p.img_url}}" alt="{{p.name}}">
-      <div ng-bind="p.name" class="col-xs-2 prod-name"> {{p.name}}</div>
-      <div class="col-xs-8 prod-descr"> [{{ p.score }}] {{p.desc | limitTo : 190 }}... </div>
+      <ul class="col-xs-2 list-unstyled">
+        <li class="prod-name">{{p.name}}</li>
+        <li class="prod-score">score: {{p.score}}</li>
+      </ul>
+      <div class="col-xs-8 prod-descr">{{p.desc | limitTo : 190 }}...</div>
     </div>
 
   </div>

@@ -52,8 +52,12 @@ body {
 }
 
 .prod-name {
-  padding: 3px 0;
-  font-size: 0.95em;
+  padding-top: 3px;
+  font-size: 1.0em;
+}
+
+.prod-score {
+  font-size: 0.75em;
 }
 
 .prod-descr {
