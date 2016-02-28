@@ -7,18 +7,11 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 import play.api.Logger
 import play.api.Play.current
-import play.api.libs.ws.{WSRequest, WS, WSClient, WSResponse}
+import play.api.libs.ws.{WS, WSRequest, WSResponse}
 import uk.mm.mpp.actors.ProviderActor.{ProductRequest, ProductResponse}
 import uk.mm.mpp.globals._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scalaj.http.{BaseHttp, HttpOptions}
-
-object ProviderHttp extends BaseHttp(options = Seq(
-  HttpOptions.connTimeout(2000),
-  HttpOptions.readTimeout(15000),
-  HttpOptions.followRedirects(false)
-))
 
 object ProviderActor {
   def props(uid: String, port: Int) = Props(classOf[ProviderActor], uid, port)
@@ -31,13 +24,12 @@ object ProviderActor {
 
 class ProviderActor(uid: String, port: Int) extends Actor {
 
-  private lazy val request : WSRequest = WS.client.url(providerUrl)
+  private lazy val request: WSRequest = WS.client.url(providerUrl)
     .withFollowRedirects(false)
     .withRequestTimeout(15000)
 
   val logger = Logger(MPP_WORKER_PREFIX + getClass.getSimpleName + "_" + uid + "_" + port)
   val providerUrl: String = "http://localhost:" + port + "/3rd/products"
-
 
   def receive = {
     case ProductRequest =>
@@ -64,6 +56,4 @@ class ProviderActor(uid: String, port: Int) extends Actor {
   }
 
   def parseJsonFrom(response: WSResponse) = parse(response.body).asInstanceOf[JArray]
-
-
 }
